@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup: "My Story" Wizard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background to see the main card */
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .fade-out {
+            animation: fadeOut 0.3s ease-in-out forwards;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+        /* Custom scrollbar for generated options */
+        .results-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .results-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .results-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .results-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- Main Page Content -->
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800 border-b pb-4">Microsites</h2>
+            <div class="mt-4">
+                <div class="border rounded-lg p-6">
+                    <h3 class="font-medium text-gray-700">Your Site</h3>
+                    <p class="text-gray-500 bg-gray-100 p-2 rounded-md mt-2">https://demo.s4ds.com/liligomez</p>
+                    <div class="mt-4">
+                        <button class="bg-gray-800 text-white px-4 py-2 rounded-md shadow-sm hover:bg-gray-700 transition-colors">Actions ▼</button>
+                    </div>
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between mb-2">
+                             <label for="profile_description" class="block text-sm font-medium text-gray-700">CREATE YOUR PROFILE:</label>
+                             <button id="openWizardBtn" class="text-sm bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
+                                ✨ Generate my story with wizard
+                             </button>
+                        </div>
+                        <textarea id="profile_description" rows="5" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Welcome to my site"></textarea>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <input type="checkbox" checked class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <label class="ml-2">Activate Microsite</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" checked class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <label class="ml-2">Show Profile</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" checked class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <label class="ml-2">Show Personal Data</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" checked class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <label class="ml-2">Show Profile Image</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-6 flex justify-end gap-3">
+            <button class="bg-gray-800 text-white px-6 py-2 rounded-md shadow-sm hover:bg-gray-700 transition-colors">Save</button>
+            <button class="bg-white text-gray-700 px-6 py-2 rounded-md border border-gray-300 shadow-sm hover:bg-gray-50 transition-colors">Cancel</button>
+        </div>
+    </div>
+    <!-- End Main Page Content -->
+
+
+    <!-- Wizard Modal -->
+    <div id="wizardModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div id="wizardContent" class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl transform transition-all fade-in">
+            <!-- Header -->
+            <div class="flex justify-between items-center p-5 border-b border-gray-200">
+                <h2 id="wizardTitle" class="text-xl font-bold text-gray-800">"My Story" Wizard</h2>
+                <button id="closeWizardBtn" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Step Content -->
+            <div id="stepContainer" class="p-8">
+                <!-- Content will be injected by JS -->
+            </div>
+
+            <!-- Footer / Navigation -->
+            <div class="px-8 py-5 bg-gray-50 rounded-b-2xl flex justify-between items-center">
+                <p id="stepIndicator" class="text-sm font-medium text-gray-500"></p>
+                <div class="flex gap-4">
+                    <button id="prevBtn" class="bg-white text-gray-700 px-6 py-2 rounded-lg border border-gray-300 shadow-sm hover:bg-gray-100 transition-colors">Previous</button>
+                    <button id="nextBtn" class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- ELEMENTS ---
+    const openWizardBtn = document.getElementById('openWizardBtn');
+    const closeWizardBtn = document.getElementById('closeWizardBtn');
+    const wizardModal = document.getElementById('wizardModal');
+    const wizardContent = document.getElementById('wizardContent');
+    const stepContainer = document.getElementById('stepContainer');
+    const wizardTitle = document.getElementById('wizardTitle');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const stepIndicator = document.getElementById('stepIndicator');
+    const profileDescriptionTextarea = document.getElementById('profile_description');
+
+    // --- STATE ---
+    let currentStep = 0;
+    const userAnswers = {};
+
+    const questions = [
+        { 
+            key: 'inspiration', 
+            label: 'What inspired you to join us?',
+            type: 'select',
+            options: [
+                'The quality of the products',
+                'The supportive community',
+                'The opportunity for personal growth',
+                'The company\'s mission and values'
+            ]
+        },
+        { 
+            key: 'experience', 
+            label: 'What is your most relevant background?',
+            type: 'select',
+            options: [
+                'Sales and customer service',
+                'Health and wellness coaching',
+                'Community leadership',
+                'Digital marketing and social media',
+                'I\'m new to this but eager to learn'
+            ]
+        },
+        { 
+            key: 'passion', 
+            label: 'What is your primary passion?',
+            type: 'select',
+            options: [
+                'Helping others succeed',
+                'Promoting a healthy lifestyle',
+                'Building authentic connections',
+                'Achieving financial independence'
+            ]
+        },
+        { 
+            key: 'enthusiasm', 
+            label: 'What excites you most about our products?',
+            type: 'select',
+            options: [
+                'Their innovative formulas',
+                'The real results they deliver',
+                'How they improve people\'s lives',
+                'Their high-quality ingredients'
+            ]
+        },
+        { 
+            key: 'goal', 
+            label: 'What is your main goal with this opportunity?',
+            type: 'select',
+            options: [
+                'To build my own successful team',
+                'To earn a supplemental income',
+                'To achieve financial freedom',
+                'To make a positive impact on others'
+            ]
+        }
+    ];
+
+    const steps = [
+        // Step 0: Welcome
+        {
+            title: 'Create Your Personal Story',
+            content: `
+                <div class="text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Welcome to the Story Wizard!</h3>
+                    <p class="text-gray-600 max-w-md mx-auto">In just a few moments, we'll help you create a professional and engaging bio for your profile. Simply answer the following questions.</p>
+                </div>
+            `
+        },
+        // Step 1 to 5: Questions
+        ...questions.map((q, index) => ({
+            title: `Question ${index + 1} of ${questions.length}`,
+            content: `
+                <div>
+                    <label for="question-${q.key}" class="block text-lg font-semibold text-gray-800 mb-3">${q.label}</label>
+                    <select id="question-${q.key}" data-key="${q.key}" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 bg-white">
+                        ${q.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                    </select>
+                </div>
+            `
+        })),
+        // Step 6: Generating
+        {
+            title: 'Generating Your Story...',
+            content: `
+                 <div class="text-center py-12">
+                    <div class="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin mx-auto"></div>
+                    <h3 class="text-2xl font-bold text-gray-800 mt-6">We're working our magic...</h3>
+                    <p class="text-gray-600 mt-2">Analyzing your answers to create the best drafts.</p>
+                </div>
+            `
+        },
+        // Step 7: Results
+        {
+            title: 'Choose Your Favorite Story!',
+            content: `
+                <div>
+                    <p class="text-gray-600 mb-6 text-center">We've generated 3 options for you. Select the one you like best. You can edit it before saving.</p>
+                    <div id="resultsContainer" class="space-y-4 max-h-[40vh] overflow-y-auto pr-2 results-container">
+                        <!-- Results will be injected here -->
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- FUNCTIONS ---
+    function openModal() {
+        currentStep = 0;
+        wizardModal.classList.remove('hidden');
+        wizardContent.classList.remove('fade-out');
+        wizardContent.classList.add('fade-in');
+        renderStep();
+    }
+
+    function closeModal() {
+        wizardContent.classList.add('fade-out');
+        setTimeout(() => {
+            wizardModal.classList.add('hidden');
+        }, 300);
+    }
+
+    function renderStep() {
+        const stepData = steps[currentStep];
+        wizardTitle.textContent = stepData.title;
+        stepContainer.innerHTML = stepData.content;
+
+        // Restore saved answer if it exists
+        if (currentStep > 0 && currentStep <= questions.length) {
+            const questionKey = questions[currentStep - 1].key;
+            const selectElement = document.getElementById(`question-${questionKey}`);
+            if (selectElement && userAnswers[questionKey]) {
+                selectElement.value = userAnswers[questionKey];
+            }
+        }
+
+        updateNav();
+
+        if (currentStep === steps.length - 2) { // Generating step
+            generateStories();
+        }
+        
+        if (currentStep === steps.length - 1) { // Results step
+            displayStories();
+        }
+    }
+
+    function updateNav() {
+        // Step Indicator
+        if (currentStep > 0 && currentStep <= questions.length) {
+             stepIndicator.textContent = `Step ${currentStep} of ${questions.length + 1}`;
+        } else {
+             stepIndicator.textContent = '';
+        }
+
+        // Button Visibility
+        prevBtn.classList.toggle('hidden', currentStep === 0 || currentStep >= steps.length - 2);
+        nextBtn.classList.toggle('hidden', currentStep >= steps.length - 2);
+        
+        // Button Text
+        if (currentStep === questions.length) {
+            nextBtn.textContent = 'Generate Drafts';
+        } else {
+            nextBtn.textContent = 'Next';
+        }
+    }
+    
+    function saveCurrentAnswer() {
+        if (currentStep > 0 && currentStep <= questions.length) {
+            const questionKey = questions[currentStep - 1].key;
+            const selectElement = document.getElementById(`question-${questionKey}`);
+            if(selectElement) {
+                userAnswers[questionKey] = selectElement.value;
+            }
+        }
+    }
+
+    function goToNext() {
+        saveCurrentAnswer();
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            renderStep();
+        }
+    }
+
+    function goToPrev() {
+        if (currentStep > 0) {
+            currentStep--;
+            renderStep();
+        }
+    }
+    
+    async function generateStories() {
+        // In a real app, you would call your backend here, which then calls the AI API.
+        // We'll simulate the AI call.
+        console.log("Simulating AI generation with answers:", userAnswers);
+        
+        setTimeout(() => {
+            const mockResponse = {
+                stories: [
+                    {
+                        title: "Professional Option",
+                        text: `With a background in ${userAnswers.experience}, I was inspired to join by ${userAnswers.inspiration.toLowerCase()}. My goal is to leverage my skills to help others, driven by a passion for ${userAnswers.passion.toLowerCase()}.`
+                    },
+                    {
+                        title: "Inspirational Option",
+                        text: `My journey here began with a simple passion: ${userAnswers.passion}. I'm excited by ${userAnswers.enthusiasm.toLowerCase()}, and my primary goal is ${userAnswers.goal.toLowerCase()}. I'm here to share that excitement with everyone!`
+                    },
+                    {
+                        title: "Approachable Option",
+                        text: `Hello! I'm someone who is passionate about ${userAnswers.passion.toLowerCase()}. What drew me here was ${userAnswers.inspiration.toLowerCase()}. I'm looking forward to achieving my goal of ${userAnswers.goal.toLowerCase()} while sharing amazing products.`
+                    }
+                ]
+            };
+            
+            // Store results to be displayed in the next step
+            window.generatedStories = mockResponse.stories;
+
+            goToNext(); // Move to results step
+        }, 2500); // Simulate network delay
+    }
+
+    function displayStories() {
+        const resultsContainer = document.getElementById('resultsContainer');
+        if (!resultsContainer || !window.generatedStories) return;
+
+        resultsContainer.innerHTML = '';
+        window.generatedStories.forEach((story, index) => {
+            const card = document.createElement('div');
+            card.className = 'bg-gray-100 p-5 rounded-lg border border-gray-200';
+            card.innerHTML = `
+                <h4 class="font-bold text-md text-blue-700 mb-2">${story.title}</h4>
+                <p class="text-gray-700 text-sm mb-4">${story.text}</p>
+                <button data-index="${index}" class="select-story-btn w-full text-center bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+                    Select and Edit
+                </button>
+            `;
+            resultsContainer.appendChild(card);
+        });
+    }
+
+    function selectStory(index) {
+        const selectedText = window.generatedStories[index].text;
+        profileDescriptionTextarea.value = selectedText;
+        closeModal();
+    }
+
+    // --- EVENT LISTENERS ---
+    openWizardBtn.addEventListener('click', openModal);
+    closeWizardBtn.addEventListener('click', closeModal);
+    nextBtn.addEventListener('click', goToNext);
+    prevBtn.addEventListener('click', goToPrev);
+    
+    // Use event delegation for dynamically created elements
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('select-story-btn')) {
+            const index = e.target.getAttribute('data-index');
+            selectStory(parseInt(index));
+        }
+    });
+
+    // Close with escape key
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !wizardModal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+});
+</script>
+
+</body>
+</html>
